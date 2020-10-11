@@ -27,7 +27,7 @@ function startPrompt(){
             name:"userChoice",
             message:"What would you like to do?",
             type:"list",
-            choices:["View All Employees", "View All Employees by Department", "View All Employess by Manager", "View All Roles", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager", "Add Role", "Remove Role", "Exit"]
+            choices:["View All Employees", "View All Employees by Department", "View All Employess by Manager", "View All Roles", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager", "Add Role", "Add Department", "Remove Role", "Exit"]
         }
     ]).then(function(response){
         console.log(response);
@@ -42,14 +42,16 @@ function startPrompt(){
             viewAllRoles();
         } else if (response.userChoice === "Add Employee"){
             addEmployee();
+        } else if (response.userChoice === "Add Role"){
+            addRole();
+        } else if (response.userChoice === "Add Department"){
+            addDepartment();
         } else if (response.userChoice === "Remove Employee"){
             removeEmployee();
         } else if (response.userChoice === "Update Employee Role"){
             updateEmployeeRole();
         } else if (response.userChoice === "Update Employee Manager"){
             updateEmployeeManager();
-        } else if (response.userChoice === "Add Role"){
-            addRole();
         } else if (response.userChoice === "Remove Role"){
             removeRole();
         } else if (response.userChoice === "Exit"){
@@ -60,7 +62,7 @@ function startPrompt(){
 
 // Set view all employees function
 function viewAllEmployees(){
-    console.log("All Employees");
+    console.log("View All Employees")
 
     // Keep asking user prompts
     startPrompt();
@@ -92,10 +94,103 @@ function viewAllRoles(){
 
 // Set add employee function
 function addEmployee(){
-    console.log("Add Employee");
+    inquirer.prompt([
+        {
+            name:"addFirstName",
+            message:"What's the employee first name?",
+        },
+        {
+            name:"addLastName",
+            message:"What's the employee last name?",
+        },
+        {
+            name:"addRoleID",
+            message:"What's the employee role id?",
+        },
+        {
+            name:"addManagerID",
+            message:"What's the employee manager id?",
+        },
+    ]).then(function(response){
+        // console.log(response);
+        connection.query("INSERT INTO employee SET ?",
+        {
+            first_name: response.addFirstName,
+            last_name: response.addLastName,
+            role_id: response.addRole,
+            manager_id: response.addManagerID
+        }),
+        function(err){
+            if(err){
+                throw err
+            }
+            console.log("Successfully added an employee to our database!")
 
-    // Keep asking user prompts
-    startPrompt();
+            // Keep asking user prompts
+            startPrompt();
+        }
+    })
+}
+
+// Set add role function
+function addRole(){
+    inquirer.prompt([
+        {
+            name:"addTitle",
+            message:"What's the role title that you would like to add?"
+        },
+        {
+            name:"addSalary",
+            message:"What's the salary of this role?"
+        },
+        {
+            name:"addDepartmentID",
+            message:"What's the department ID of this role?"
+        },
+    ]).then(function(response){
+        // console.log(response);
+        connection.query("INSERT INTO role SET ?", 
+        {
+            title: response.addTitle,
+            salary: response.addSalary,
+            department_id: response.addDepartmentID
+        }),
+        function(err){
+            if(err){
+                throw err
+            }
+            console.log("Successfully added role to our database!")
+            
+            // Keep asking user prompts
+            startPrompt();
+        }
+    })
+}
+
+// Set add department function
+function addDepartment(){
+    inquirer.prompt([
+        {
+            name:"addDepartmentName",
+            message:"What's the department name that you would like to add?"
+        },
+    ]).then(function(response){
+        // console.log(response);
+        connection.query("INSERT INTO department SET ?",
+        {
+            name: response.addDepartmentName
+        }),
+        function(err){
+            if(err){
+                throw err
+            }
+            console.log("Successfully added a department to our database!")
+            
+            // Keep asking user prompts
+            startPrompt();
+        }
+    })
+
 }
 
 // Set remove employee function
@@ -117,14 +212,6 @@ function updateEmployeeRole(){
 // Set update employee manager function
 function updateEmployeeManager(){
     console.log("Update Employee Manager");
-
-    // Keep asking user prompts
-    startPrompt();
-}
-
-// Set add role function
-function addRole(){
-    console.log("Add Role");
 
     // Keep asking user prompts
     startPrompt();
