@@ -66,7 +66,7 @@ function startPrompt(){
 
 // Set view all employees function
 function viewAllEmployees(){
-    // console.log("View All Employees")
+    console.log("View All Employees")
     // ================================
     // connection.query("SELECT first_name, last_name, title, department, salary, manager FROM employee JOIN", function(err){
     //     if(err) {
