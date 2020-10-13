@@ -1,4 +1,4 @@
-# Team Profile Generator
+# Employee Generator
 
 ## Description 
 The objective of this application is to track the status of employee in a company. The employers can utilize this tool to add features into their database and it will automatically generate new data input and add it to company database. For this tool, the employers can add employee, role, and department information along with their ID to avoid any confusion when they pull out the information. This tool is appropriate for employers who don't want to update their database manually
