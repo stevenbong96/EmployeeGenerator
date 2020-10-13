@@ -51,13 +51,13 @@ INSERT INTO role(title, salary, department_id)
 VALUES ("Software Engineer", 100000, 1);
 
 INSERT INTO role(title, salary, department_id)
-VALUES ("Researcher", 90000, 1);
+VALUES ("Researcher", 90000, 2);
 
 INSERT INTO role(title, salary, department_id)
-VALUES ("Consulting", 50000, 1);
+VALUES ("Consulting", 50000, 3);
 
 INSERT INTO role(title, salary, department_id)
-VALUES ("Front desk", 45000, 1);
+VALUES ("Front desk", 45000, 4);
 
 -- Insert values to employee tables
 INSERT INTO employee(first_name, last_name, role_id, manager_id)

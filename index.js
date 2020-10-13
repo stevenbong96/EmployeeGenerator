@@ -68,59 +68,89 @@ function startPrompt(){
 function viewAllEmployees(){
     console.log("View All Employees")
     // ================================
-    // connection.query("SELECT first_name, last_name, title, department, salary, manager FROM employee JOIN", function(err){
-    //     if(err) {
-    //         throw err
-    //     }
-    //     console.log("Success!!");
+    connection.query("SELECT employee.id, first_name, last_name, role.title, department.name, role.salary, manager_id FROM employee JOIN role ON role_id = role.id JOIN department ON department_id = department.id ", function(err, data){
+        if(err) {
+            throw err
+        }
+        console.table(data);
+        console.log("Success!!");
 
-    //     // Keep asking user prompts
-    //     startPrompt();
-    // })
+        // Keep asking user prompts
+        startPrompt();
+    })
 }
-
+var departmentsArr = ["Engineer", "Research Development", "Marketing", "Customer Service"]
 // Set view all employees by department function
 function viewAllEmployeesByDepartment(){
-    console.log("View All Employees By Department")
-    // connection.query("SELECT first_name, last_name, department FROM ?",
-    // {
-
-    // }, 
-    // function(err){
-    //     if(err){
-    //         throw err
-    //     }
-    //     console.log("Success!!")
-        
-    //     // Keep asking user prompts
-    //     startPrompt();
-    // })
+    // console.log("View All Employees By Department")
+    inquirer.prompt([
+        {
+            type: "list",
+            name:"viewByDepartment",
+            message:"Which department that you would like to view?",
+            choices: departmentsArr
+        }
+    ]).then(function(response){
+        // console.log(response);
+        let depID = departmentsArr.indexOf(response.viewByDepartment)+1
+        connection.query(`SELECT employee.id, first_name, last_name, role.title, role.salary,department.name
+        FROM employee
+        LEFT JOIN role
+        ON role_id = role.id
+        LEFT JOIN department
+        ON department_id = department.id
+        WHERE department_id = ?`,
+        [
+        depID
+        ], 
+        function(err, response){
+            if(err){
+                throw err
+            }
+            console.table(response)
+            console.log("Success!!")
+            
+            // Keep asking user prompts
+            startPrompt();
+        })
+    })
 }
 
 // Set view all employees by manager function
 function viewAllEmployeesByManager(){
     console.log("All Employees By Manager");
-    // connection.query("SELECT first_name, last_name, manager_id FROM ?",
-    // {
+    inquirer.prompt([
+        {
+            name:"viewByManager",
+            message:"Which manager that you would like to view?"
+        }
+    ]).then(function(response){
+        console.log(response);
+        // connection.query("SELECT first_name, last_name, department FROM ?",
+        // {
 
-    // }, function(err){
-    //     if(err){
-    //         throw err
-    //     }
-    //     console.log("Success!!")
-        
-    //     // Keep asking user prompts
-    //     startPrompt();
-    // })
+        // }, 
+        // function(err, response){
+        //     if(err){
+        //         throw err
+        //     }
+        //     console.table(response)
+        //     console.log("Success!!")
+            
+        //     // Keep asking user prompts
+        //     startPrompt();
+        // })
+    })
 }
 
 // Set view all roles function
 function viewAllRoles(){
     // console.log("All Roles");
-    connection.query("SELECT * FROM role", function(err){
+    connection.query("SELECT * FROM role", function(err, data){
         if(err){
             throw err
         }
+        console.table(data)
         console.log("Success!!")
         
         // Keep asking user prompts
@@ -131,10 +161,11 @@ function viewAllRoles(){
 // Set view all roles function
 function viewAllDepartments(){
     // console.log("All Roles");
-    connection.query("SELECT * FROM department", function(err){
+    connection.query("SELECT * FROM department", function(err, data){
         if(err){
             throw err
         }
+        console.table(data)
         console.log("Success!!")
         
         // Keep asking user prompts
@@ -163,22 +194,24 @@ function addEmployee(){
         },
     ]).then(function(response){
         // console.log(response);
-        connection.query("INSERT INTO employee SET ?",
-        {
-            first_name: response.addFirstName,
-            last_name: response.addLastName,
-            role_id: response.addRole,
-            manager_id: response.addManagerID
-        }),
-        function(err){
+        connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
+        VALUES (?,?,?,?)`,
+        [
+            response.addFirstName,
+            response.addLastName,
+            response.addRoleID,
+            response.addManagerID
+        ],
+        function(err, data){
             if(err){
                 throw err
             }
+            console.table(data)
             console.log("Successfully added an employee to our database!")
 
             // Keep asking user prompts
             startPrompt();
-        }
+        })
     })
 }
 
@@ -205,10 +238,11 @@ function addRole(){
             salary: response.addSalary,
             department_id: response.addDepartmentID
         }),
-        function(err){
+        function(err, response){
             if(err){
                 throw err
             }
+            console.table(response)
             console.log("Successfully added role to our database!")
             
             // Keep asking user prompts
@@ -230,10 +264,11 @@ function addDepartment(){
         {
             name: response.addDepartmentName
         }),
-        function(err){
+        function(err, response){
             if(err){
                 throw err
             }
+            console.table(response)
             console.log("Successfully added a department to our database!")
             
             // Keep asking user prompts
@@ -267,10 +302,11 @@ function updateEmployeeRole(){
             {salary: response.updateSalary},
             {department_id: response.updateDepartmentId}
         ],
-        function(err){
+        function(err, response){
             if(err){
                 throw err
             }
+            console.table(response)
             console.log("Successfully update employee role!")
             
             // Keep asking user prompts
@@ -323,32 +359,28 @@ function updateEmployeeManager(){
 // Set remove employee function
 function removeEmployee(){
     console.log("Remove Employee");
-    // inquirer.prompt([
-    //     {
-    //         name:"removeFirstName",
-    //         message:"Please put employee first name"
-    //     },
-    //     {
-    //         name:"removeLastName",
-    //         message:"Please put employee last name"
-    //     },
-    // ]).then(function(response){
-    //     console.log(response);
-    //     connection.query("DELETE FROM employee WHERE ?", 
-    //     {
-    //         first_name: response.removeFirstName,
-    //         last_name: response.removeLastName
-    //     }, 
-    //     function(err){
-    //     if(err){
-    //         throw err
-    //     }
-    //     console.log("Successfully remove an employee from our database!")
+    inquirer.prompt([
+        {
+            name:"removeEmployeeID",
+            message:"What employee ID that you would like to remove"
+        },
+    ]).then(function(response){
+        // console.log(response);
+        connection.query(`DELETE FROM employee WHERE employee.id = ?`, 
+        [
+            response.removeEmployeeID
+        ], 
+        function(err, response){
+        if(err){
+            throw err
+        }
+        console.table(response);
+        console.log("Successfully remove an employee from our database!")
         
-    //     // Keep asking user prompts
-    //     startPrompt();
-    // })
-    // })
+        // Keep asking user prompts
+        startPrompt();
+    })
+    })
 }
 
 // Set remove role function
