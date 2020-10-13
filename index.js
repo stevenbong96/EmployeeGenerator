@@ -29,7 +29,7 @@ function startPrompt(){
             name:"userChoice",
             message:"What would you like to do?",
             type:"list",
-            choices:["View All Employees", "View All Employees by Department", "View All Employess by Manager", "View All Roles", "View All Departments", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager", "Add Role", "Add Department", "Remove Role", "Remove Department", "Exit"]
+            choices:["View All Employees", "View All Roles", "View All Departments", "View All Employees by Department", "Add Employee", "Add Role", "Add Department", "Remove Employee", "Remove Role", "Remove Department", "Update Employee Role", "Update Employee Manager", "Exit"]
         }
     ]).then(function(response){
         if(response.userChoice === "View All Employees"){
@@ -65,7 +65,6 @@ function startPrompt(){
 }
 
 // Set view all employees function
-// Still have issue displaying manager name
 function viewAllEmployees(){
     connection.query("SELECT employee.id AS Employee_ID, first_name, last_name, role.title AS Role, department.name AS Department, role.salary, CONCAT(first_name,' ', last_name) AS Manager FROM employee JOIN role ON role_id = role.id JOIN department ON department_id = department.id", function(err, data){
         if(err) {
@@ -143,7 +142,7 @@ function viewAllEmployeesByManager(){
 
 // Set view all roles function
 function viewAllRoles(){
-    connection.query("SELECT employee.id AS Employee_ID, first_name, last_name, role.title AS Role FROM employee RIGHT JOIN role ON role_id = role.id", function(err, data){
+    connection.query("SELECT employee.id AS Employee_ID, first_name, last_name, role.title AS Role, role.salary, role.department_id FROM employee RIGHT JOIN role ON role_id = role.id", function(err, data){
         if(err){
             throw err
         }
@@ -272,11 +271,10 @@ function addDepartment(){
 }
 
 // Set update employee role function
-// Still had error when updating employee role
 function updateEmployeeRole(){
     inquirer.prompt([
         {
-            name:"updateIDRole", // CHange this name
+            name:"updateIDRole",
             message:"What's the new ID role?"
         },
         {
@@ -303,7 +301,7 @@ function updateEmployeeRole(){
 }
 
 // Set update employee manager function
-// Shows success but not affecting any column
+// Had problem
 function updateEmployeeManager(){
     inquirer.prompt([
         {
@@ -323,12 +321,12 @@ function updateEmployeeManager(){
             message:"What's the new manager ID?"
         },
     ]).then(function(response){
-        connection.query("UPDATE employee SET ? WHERE ?",
+        connection.query(`UPDATE employee SET (?,?,?) WHERE manager_id = ?`,
         [
             {first_name: response.updateFirstName},
             {last_name: response.updateLastName},
             {role_id: response.updateRoleId},
-            {manager_id: response.updateManagerId}
+            response.updateManagerId
         ],
         function(err, response){
             if(err){
@@ -369,7 +367,6 @@ function removeEmployee(){
 }
 
 // Set remove role function
-// Shows error and dk why
 function removeRole(){
     inquirer.prompt([
         {
@@ -395,7 +392,6 @@ function removeRole(){
 }
 
 // Set remove department function
-// Success delete in database but not in terminal
 function removeDepartment(){
     inquirer.prompt([
         {

@@ -32,14 +32,10 @@ Language Contributions
 To use the badges, feel free to check [shields.io](https://shields.io/) website for variety of badges
 
 ## Test Instruction 
-Proof of test result of this application 
+Proof of test result of this application works (Shown by Connection ID)
 
-![Test Results](./TestResult.JPG)
+![Test Results](./Images/TestResult.JPG)
 
 ## License 
   
 MIT License
-
-## Application Screenshot
-
-![Screenshot](./screenshot.JPG)
