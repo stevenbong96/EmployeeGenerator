@@ -65,6 +65,7 @@ function startPrompt(){
 }
 
 // Set view all employees function
+// Still have issue displaying manager name
 function viewAllEmployees(){
     connection.query("SELECT employee.id AS Employee_ID, first_name, last_name, role.title AS Role, department.name AS Department, role.salary, CONCAT(first_name,' ', last_name) AS Manager FROM employee JOIN role ON role_id = role.id JOIN department ON department_id = department.id", function(err, data){
         if(err) {
@@ -113,6 +114,7 @@ function viewAllEmployeesByDepartment(){
 }
 
 // Set view all employees by manager function
+// Issue with displaying manager name (Same with view all employees)
 function viewAllEmployeesByManager(){
     console.log("All Employees By Manager");
     inquirer.prompt([
@@ -141,7 +143,7 @@ function viewAllEmployeesByManager(){
 
 // Set view all roles function
 function viewAllRoles(){
-    connection.query("SELECT employee.id AS Employee_ID, first_name, last_name, role.title AS Role FROM employee JOIN role ON role_id = role.id", function(err, data){
+    connection.query("SELECT employee.id AS Employee_ID, first_name, last_name, role.title AS Role FROM employee RIGHT JOIN role ON role_id = role.id", function(err, data){
         if(err){
             throw err
         }
@@ -155,7 +157,7 @@ function viewAllRoles(){
 
 // Set view all roles function
 function viewAllDepartments(){
-    connection.query("SELECT employee.id AS Employee_ID, first_name, last_name, department.name AS Department FROM employee JOIN role ON role_id = role.id JOIN department ON department_id = department.id", function(err, data){
+    connection.query("SELECT employee.id AS Employee_ID, first_name, last_name, department.name AS Department FROM employee JOIN role ON role_id = role.id RIGHT JOIN department ON department_id = department.id", function(err, data){
         if(err){
             throw err
         }
@@ -270,26 +272,22 @@ function addDepartment(){
 }
 
 // Set update employee role function
+// Still had error when updating employee role
 function updateEmployeeRole(){
     inquirer.prompt([
         {
-            name:"updateTitle",
-            message:"What's the new title role?"
+            name:"updateIDRole", // CHange this name
+            message:"What's the new ID role?"
         },
         {
-            name:"updateSalary",
-            message:"What's the new salary?"
-        },
-        {
-            name:"updateDepartmentId",
-            message:"What's the new department ID?"
+            name:"updateEmployeeID",
+            message:"Which employee ID that you would like to update?"
         },
     ]).then(function(response){
-        connection.query("UPDATE role SET ? WHERE ?",
+        connection.query(`UPDATE employee SET ? WHERE id = ?`,
         [
-            {title: response.updateTitle},
-            {salary: response.updateSalary},
-            {department_id: response.updateDepartmentId}
+            {role_id: response.updateIDRole},
+            response.updateEmployeeID,
         ],
         function(err, response){
             if(err){
@@ -305,6 +303,7 @@ function updateEmployeeRole(){
 }
 
 // Set update employee manager function
+// Shows success but not affecting any column
 function updateEmployeeManager(){
     inquirer.prompt([
         {
@@ -357,19 +356,20 @@ function removeEmployee(){
             response.removeEmployeeID
         ], 
         function(err, response){
-        if(err){
-            throw err
-        }
-        console.table(response);
-        console.log("Successfully remove an employee from our database!")
-        
-        // Keep asking user prompts
-        startPrompt();
-    })
+            if(err){
+                throw err
+            }
+            console.table(response);
+            console.log("Successfully remove an employee from our database!")
+            
+            // Keep asking user prompts
+            startPrompt();
+        })
     })
 }
 
 // Set remove role function
+// Shows error and dk why
 function removeRole(){
     inquirer.prompt([
         {
@@ -395,6 +395,7 @@ function removeRole(){
 }
 
 // Set remove department function
+// Success delete in database but not in terminal
 function removeDepartment(){
     inquirer.prompt([
         {
