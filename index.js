@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
 
     user: "root",
 
-    password: "Joseph96-",
+    password: "",
     database: "trackemployees_db"
 })
 
@@ -29,7 +29,7 @@ function startPrompt(){
             name:"userChoice",
             message:"What would you like to do?",
             type:"list",
-            choices:["View All Employees", "View All Roles", "View All Departments", "View All Employees by Department", "Add Employee", "Add Role", "Add Department", "Remove Employee", "Remove Role", "Remove Department", "Update Employee Role", "Update Employee Manager", "Exit"]
+            choices:["View All Employees", "View All Roles", "View All Departments", "View All Employees by Department", "Add Employee", "Add Role", "Add Department", "Remove Employee", "Remove Role", "Remove Department", "Update Employee Role", "Exit"]
         }
     ]).then(function(response){
         if(response.userChoice === "View All Employees"){
@@ -112,34 +112,6 @@ function viewAllEmployeesByDepartment(){
     })
 }
 
-// Set view all employees by manager function
-// Issue with displaying manager name (Same with view all employees)
-function viewAllEmployeesByManager(){
-    console.log("All Employees By Manager");
-    inquirer.prompt([
-        {
-            name:"viewByManager",
-            message:"Which manager that you would like to view?"
-        }
-    ]).then(function(response){
-        console.log(response);
-        // connection.query("SELECT first_name, last_name, department FROM ?",
-        // {
-
-        // }, 
-        // function(err, response){
-        //     if(err){
-        //         throw err
-        //     }
-        //     console.table(response)
-        //     console.log("Success!!")
-            
-        //     // Keep asking user prompts
-        //     startPrompt();
-        // })
-    })
-}
-
 // Set view all roles function
 function viewAllRoles(){
     connection.query("SELECT employee.id AS Employee_ID, first_name, last_name, role.title AS Role, role.salary, role.department_id FROM employee RIGHT JOIN role ON role_id = role.id", function(err, data){
@@ -200,7 +172,7 @@ function addEmployee(){
             if(err){
                 throw err
             }
-            console.table(response)
+            // console.table(response)
             console.log("Successfully added an employee to our database!")
 
             // Keep asking user prompts
@@ -235,7 +207,7 @@ function addRole(){
             if(err){
                 throw err
             }
-            console.table(response)
+            // console.table(response)
             console.log("Successfully added role to our database!")
             
             // Keep asking user prompts
@@ -260,7 +232,7 @@ function addDepartment(){
             if(err){
                 throw err
             }
-            console.table(response)
+            // console.table(response)
             console.log("Successfully added a department to our database!")
             
             // Keep asking user prompts
@@ -291,50 +263,9 @@ function updateEmployeeRole(){
             if(err){
                 throw err
             }
-            console.table(response)
+            // console.table(response)
             console.log("Successfully update employee role!")
             
-            // Keep asking user prompts
-            startPrompt();
-        })
-    })
-}
-
-// Set update employee manager function
-// Had problem
-function updateEmployeeManager(){
-    inquirer.prompt([
-        {
-            name:"updateFirstName",
-            message:"What's the new manager first name?"
-        },
-        {
-            name:"updateLastName",
-            message:"What's the new manager last name?"
-        },
-        {
-            name:"updateRoleId",
-            message:"What's the new manager role id?"
-        },
-        {
-            name:"updateManagerId",
-            message:"What's the new manager ID?"
-        },
-    ]).then(function(response){
-        connection.query(`UPDATE employee SET (?,?,?) WHERE manager_id = ?`,
-        [
-            {first_name: response.updateFirstName},
-            {last_name: response.updateLastName},
-            {role_id: response.updateRoleId},
-            response.updateManagerId
-        ],
-        function(err, response){
-            if(err){
-                throw err
-            }
-            console.table(response)
-            console.log("Successfuuly update the employee manager!")
-
             // Keep asking user prompts
             startPrompt();
         })
@@ -357,7 +288,7 @@ function removeEmployee(){
             if(err){
                 throw err
             }
-            console.table(response);
+            // console.table(response);
             console.log("Successfully remove an employee from our database!")
             
             // Keep asking user prompts
@@ -382,7 +313,7 @@ function removeRole(){
             if(err){
                 throw err
             }
-            console.table(response)
+            // console.table(response)
             console.log("Successfully remove the role from our database!")
             
             // Keep asking user prompts
@@ -407,7 +338,7 @@ function removeDepartment(){
             if(err){
                 throw err
             }
-            console.table(response);
+            // console.table(response);
             console.log("Successfully removed");
 
             // Keep asking user prompts
